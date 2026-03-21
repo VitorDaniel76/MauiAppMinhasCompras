@@ -9,6 +9,8 @@ namespace MauiAppMinhasCompras
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(ListaProduto), typeof(ListaProduto));
+
+            Routing.RegisterRoute(nameof(NovoProduto), typeof(NovoProduto));
         }
     }
 }
