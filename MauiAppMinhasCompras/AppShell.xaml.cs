@@ -11,6 +11,8 @@ namespace MauiAppMinhasCompras
             Routing.RegisterRoute(nameof(ListaProduto), typeof(ListaProduto));
 
             Routing.RegisterRoute(nameof(NovoProduto), typeof(NovoProduto));
+
+            Routing.RegisterRoute(nameof(EditarProduto), typeof(EditarProduto));
         }
     }
 }

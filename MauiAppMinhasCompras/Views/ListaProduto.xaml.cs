@@ -15,9 +15,16 @@ public partial class ListaProduto : ContentPage
 	}
     protected async override void OnAppearing()
     {
-		List<Produto> tmp = await App.Db.GetAll();
+		try
+		{
+			List<Produto> tmp = await App.Db.GetAll();
 
-		tmp.ForEach(i => lista.Add(i));
+			tmp.ForEach(i => lista.Add(i));
+		}
+		catch (Exception ex) {
+            await DisplayAlert("Ops", ex.Message, "OK");
+		}
+		
     }
     private async void Adicionar_Clicked(object sender, EventArgs e)
     {
@@ -33,13 +40,22 @@ public partial class ListaProduto : ContentPage
 
     private async void txt_search_TextChanged(object sender, TextChangedEventArgs e)
     {
-		string q = e.NewTextValue;
+		try
+		{
 
-		lista.Clear();
 
-		List<Produto> tmp = await App.Db.Search(q);
+			string q = e.NewTextValue;
 
-		tmp.ForEach(i => lista.Add(i));
+			lista.Clear();
+
+			List<Produto> tmp = await App.Db.Search(q);
+
+			tmp.ForEach(i => lista.Add(i));
+		}
+		catch (Exception ex) 
+		{
+			await DisplayAlert("OPS", ex.Message, "OK");
+		}
     }
 
     private void ToolbarItem_Clicked(object sender, EventArgs e)
@@ -49,5 +65,45 @@ public partial class ListaProduto : ContentPage
 		string msg = $"O total é {soma:C}";
 
 		DisplayAlert("Total dos Produtos", msg, "OK");
+    }
+
+    private async void MenuItem_Clicked(object sender, EventArgs e)
+    {
+		try
+		{
+			MenuItem selecionado = sender as MenuItem;
+
+			Produto p = selecionado.BindingContext as Produto;
+
+			bool confirm = await DisplayAlert("Tem Certeza?", $"Remover {p.Descricao}", "Sim", "Não");
+
+			if (confirm)
+			{
+				await App.Db.Delete(p.Id);
+				lista.Remove(p);
+			}
+		}
+		catch (Exception ex) 
+		{
+			await DisplayAlert("Ops", ex.Message, "OK");
+		}
+    }
+
+    private async void lst_produtos_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+    {
+		try
+		{
+			Produto p = e.SelectedItem as Produto;
+
+            await Shell.Current.GoToAsync(nameof(EditarProduto), new Dictionary<string, object>
+            {
+				["Produto"] = p
+			});
+		}
+		catch  (Exception ex)
+		{
+			await DisplayAlert("Ops", ex.Message, "OK");
+		}
+
     }
 }
